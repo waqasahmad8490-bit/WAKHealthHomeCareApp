@@ -1,7 +1,7 @@
 
 name: Build WAK Android APK
 
-on:
+"on":
   workflow_dispatch:
   push:
     branches:
