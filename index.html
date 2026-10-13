@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#063b67"><title>WAK Health & Home Care</title>
+<style>
+:root{--navy:#063b67;--teal:#119b91;--ink:#162b3b;--muted:#637687;--line:#dfe8ef;--soft:#f4f8fb;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--soft);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink)}header{background:var(--navy);color:white;padding:18px 16px;position:sticky;top:0;z-index:3}header strong{font-size:18px}header small{display:block;color:#c9dbe8;margin-top:3px}.wrap{max-width:900px;margin:18px auto;padding:0 12px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 5px 20px #123b5408}.hidden{display:none!important}h1{font-size:23px;color:var(--navy);margin:0 0 8px}h2{font-size:18px;color:var(--navy);margin:0 0 12px}p{color:var(--muted);line-height:1.5}label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}input,textarea,select{width:100%;padding:11px;border:1px solid #ccd9e3;border-radius:9px;font:inherit;background:white}button{border:0;border-radius:9px;padding:11px 14px;background:var(--navy);color:white;font-weight:700;font:inherit;cursor:pointer}.secondary{background:#e9f2f7;color:var(--navy)}.teal{background:var(--teal)}.danger{background:var(--red)}.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.tabs button{white-space:nowrap}.tabs button.active{background:var(--teal)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.full{grid-column:1/-1}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.item{border:1px solid var(--line);padding:12px;border-radius:10px;margin:8px 0}.item strong{color:var(--navy)}.status{white-space:pre-wrap;padding:11px;background:#eef6fb;border-radius:8px;margin-top:12px;font-size:13px}.error{background:#fff0ef;color:var(--red)}.success{background:#eaf8f0;color:#12683c}.muted{font-size:12px;color:var(--muted)}.money{text-align:right;font-variant-numeric:tabular-nums}@media(max-width:600px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.wrap{margin:12px auto}}
+</style>
+</head>
+<body>
+<header><strong>WAK Health &amp; Home Care</strong><small>Abbottabad · Patient & Billing App</small></header>
+<main class="wrap">
+<section id="login" class="card">
+<h1>Admin Login</h1><p>Sign in with your existing Supabase admin account.</p>
+<form id="loginForm"><label>Email</label><input id="email" type="email" autocomplete="username" required><label>Password</label><input id="password" type="password" autocomplete="current-password" required><p><button type="submit">Sign in</button></p></form><div id="loginStatus" class="status hidden"></div>
+</section>
+<section id="app" class="hidden">
+<div class="card row" style="justify-content:space-between"><div><h1>Admin Dashboard</h1><div class="muted">Patient records and billing</div></div><button id="logout" class="secondary">Log out</button></div>
+<nav class="tabs"><button data-tab="patients" class="active">Patients</button><button data-tab="invoices">Invoices & Receipts</button></nav>
+<section id="patients" class="card">
+<h2>Add / Update Patient</h2><form id="patientForm"><input type="hidden" id="patientId"><div class="grid">
+<div><label>Patient full name *</label><input id="pName" required maxlength="150"></div>
+<div><label>Phone / WhatsApp</label><input id="pPhone" inputmode="tel" placeholder="03xxxxxxxxx" maxlength="30"></div>
+<div><label>Age</label><input id="pAge" type="number" min="0" max="120"></div>
+<div><label>Gender</label><select id="pGender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+<div class="full"><label>Address / Area</label><input id="pAddress" maxlength="300"></div>
+<div class="full"><label>Care notes (avoid unnecessary sensitive details)</label><textarea id="pNotes" maxlength="2000"></textarea></div></div><div class="row" style="margin-top:14px"><button type="submit">Save Patient</button><button type="button" id="cancelPatient" class="secondary">Clear</button></div></form>
+<div id="patientStatus" class="status hidden"></div><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>Patient Records</h2><input id="patientSearch" placeholder="Search by name or phone"><div id="patientList"><p class="muted">Sign in to load patients.</p></div>
+</section>
+<section id="invoices" class="card hidden">
+<h2>Create Invoice / Receipt</h2><form id="invoiceForm"><div class="grid">
+<div class="full"><label>Patient *</label><select id="invoicePatient" required><option value="">Select patient</option></select></div>
+<div><label>Service / Description *</label><input id="service" required maxlength="200" placeholder="Home nursing / Physiotherapy"></div>
+<div><label>Amount (PKR) *</label><input id="amount" required type="number" min="0" step="1"></div>
+<div><label>Amount paid (PKR)</label><input id="paid" type="number" min="0" step="1" value="0"></div>
+<div><label>Date</label><input id="invoiceDate" type="date" required></div>
+<div><label>Payment status</label><select id="paymentStatus"><option value="unpaid">Unpaid</option><option value="partial">Partially Paid</option><option value="paid">Paid</option></select></div>
+<div class="full"><label>Notes (optional)</label><textarea id="invoiceNotes" maxlength="1000"></textarea></div></div><p class="muted">The app calculates the balance. Confirm amounts before sharing.</p><div class="row"><button type="submit">Save Invoice</button></div></form>
+<div id="invoiceStatus" class="status hidden"></div><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>Saved Invoices</h2><div id="invoiceList"></div>
+</section>
+<div id="globalStatus" class="status hidden"></div>
+</section>
+<p class="muted" style="text-align:center">WAK Health &amp; Home Care Abbottabad · Keep patient information confidential.</p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase-config.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), cfg=window.WAK_SUPABASE||{};
+const configured=cfg.url&&cfg.anonKey; let db=null, patients=[];
+function msg(id,text,type=''){const el=$(id);el.textContent=text;el.className='status'+(type?' '+type:'');el.classList.remove('hidden')}
+function clear(id){$(id).classList.add('hidden');$(id).textContent=''}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(v){return 'PKR '+Number(v||0).toLocaleString('en-PK',{maximumFractionDigits:0})}
+function today(){return new Date().toISOString().slice(0,10)}
+function showApp(){ $('login').classList.add('hidden');$('app').classList.remove('hidden');loadPatients();loadInvoices()}
+function showLogin(){$('app').classList.add('hidden');$('login').classList.remove('hidden')}
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();clear('loginStatus');if(!configured||!window.supabase){msg('loginStatus','Supabase configuration is missing.','error');return}db=window.supabase.createClient(cfg.url,cfg.anonKey);const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){msg('loginStatus',error.message,'error');return}showApp()});
+$('logout').addEventListener('click',async()=>{if(db)await db.auth.signOut();showLogin()});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));$('patients').classList.toggle('hidden',b.dataset.tab!=='patients');$('invoices').classList.toggle('hidden',b.dataset.tab!=='invoices')}));
+function clearPatient(){$('patientForm').reset();$('patientId').value='';clear('patientStatus')}
+$('cancelPatient').addEventListener('click',clearPatient);
+$('patientForm').addEventListener('submit',async e=>{e.preventDefault();clear('patientStatus');const rec={full_name:$('pName').value.trim(),phone:$('pPhone').value.trim()||null,age:$('pAge').value?Number($('pAge').value):null,gender:$('pGender').value||null,address:$('pAddress').value.trim()||null,care_notes:$('pNotes').value.trim()||null,updated_at:new Date().toISOString()};try{let q=$('patientId').value?db.from('wak_patients').update(rec).eq('id',$('patientId').value):db.from('wak_patients').insert(rec);const {error}=await q;if(error)throw error;msg('patientStatus','Patient record saved.','success');clearPatient();await loadPatients()}catch(err){msg('patientStatus','Could not save patient: '+err.message,'error')}});
+async function loadPatients(){const {data,error}=await db.from('wak_patients').select('*').order('created_at',{ascending:false});if(error){$('patientList').innerHTML='<p class="muted">Could not load patients: '+esc(error.message)+'. Run the included SQL setup first.</p>';return}patients=data||[];renderPatients();const sel=$('invoicePatient');sel.innerHTML='<option value="">Select patient</option>'+patients.map(p=>`<option value="${esc(p.id)}">${esc(p.full_name)}${p.phone?' — '+esc(p.phone):''}</option>`).join('')}
+function renderPatients(){const term=$('patientSearch').value.toLowerCase();const rows=patients.filter(p=>(p.full_name+' '+(p.phone||'')).toLowerCase().includes(term));$('patientList').innerHTML=rows.length?rows.map(p=>`<article class="item"><strong>${esc(p.full_name)}</strong><p class="muted">${esc(p.phone||'No phone')} · ${esc(p.age??'Age not entered')} · ${esc(p.gender||'')}</p><p>${esc(p.address||'')}${p.care_notes?'<br>'+esc(p.care_notes):''}</p><div class="row"><button class="secondary" data-edit-p="${esc(p.id)}">Edit</button><button data-share-p="${esc(p.id)}" class="teal">WhatsApp</button></div></article>`).join(''):'<p class="muted">No patient records found.</p>'}
+$('patientSearch').addEventListener('input',renderPatients);
+$('patientList').addEventListener('click',e=>{const edit=e.target.closest('[data-edit-p]'),share=e.target.closest('[data-share-p]');if(edit){const p=patients.find(x=>String(x.id)===edit.dataset.editP);if(!p)return;$('patientId').value=p.id;$('pName').value=p.full_name||'';$('pPhone').value=p.phone||'';$('pAge').value=p.age??'';$('pGender').value=p.gender||'';$('pAddress').value=p.address||'';$('pNotes').value=p.care_notes||'';window.scrollTo({top:0,behavior:'smooth'})}if(share){const p=patients.find(x=>String(x.id)===share.dataset.shareP);if(p&&p.phone){const n=p.phone.replace(/\D/g,'').replace(/^0/,'92');window.open('https://wa.me/'+n+'?text='+encodeURIComponent('Assalam-o-Alaikum '+p.full_name+', WAK Health & Home Care Abbottabad se rabta karne ka shukriya.'),'_blank')}else alert('Is patient ka phone number pehle add karein.')}});
+$('invoiceDate').value=today();
+$('invoiceForm').addEventListener('submit',async e=>{e.preventDefault();clear('invoiceStatus');const total=Number($('amount').value),paid=Number($('paid').value||0);if(paid>total){msg('invoiceStatus','Paid amount cannot be greater than total amount.','error');return}const status=paid>=total?'paid':paid>0?'partial':'unpaid';const rec={patient_id:$('invoicePatient').value,service_description:$('service').value.trim(),amount_total:total,amount_paid:paid,payment_status:status,invoice_date:$('invoiceDate').value,notes:$('invoiceNotes').value.trim()||null};try{const {error}=await db.from('wak_invoices').insert(rec);if(error)throw error;msg('invoiceStatus','Invoice saved successfully.','success');$('invoiceForm').reset();$('invoiceDate').value=today();$('paid').value='0';$('paymentStatus').value='unpaid';await loadInvoices()}catch(err){msg('invoiceStatus','Could not save invoice: '+err.message,'error')}});
+async function loadInvoices(){const {data,error}=await db.from('wak_invoices').select('*, wak_patients(full_name,phone)').order('created_at',{ascending:false});if(error){$('invoiceList').innerHTML='<p class="muted">Could not load invoices: '+esc(error.message)+'. Run the included SQL setup first.</p>';return}const rows=data||[];$('invoiceList').innerHTML=rows.length?rows.map(i=>{const bal=Number(i.amount_total)-Number(i.amount_paid);const text='WAK HEALTH & HOME CARE ABBOTTABAD\\n'+(i.payment_status==='paid'?'PAYMENT RECEIPT':'INVOICE')+'\\nInvoice: '+i.id+'\\nDate: '+i.invoice_date+'\\nPatient: '+(i.wak_patients?.full_name||'Patient')+'\\nService: '+i.service_description+'\\nTotal: '+money(i.amount_total)+'\\nPaid: '+money(i.amount_paid)+'\\nBalance: '+money(bal)+'\\nStatus: '+i.payment_status.toUpperCase()+'\\n'+(i.notes||'')+'\\nContact: 03305210011';return `<article class="item"><strong>${esc(i.wak_patients?.full_name||'Patient')} · ${esc(i.service_description)}</strong><p>${esc(i.invoice_date)} · ${money(i.amount_total)} · ${esc(i.payment_status)}</p><p class="muted">Paid ${money(i.amount_paid)} · Balance ${money(bal)}</p><div class="row"><button class="secondary" data-copy-invoice="${esc(i.id)}">Copy receipt text</button><button class="teal" data-wa-invoice="${esc(i.id)}">Share on WhatsApp</button></div><textarea class="hidden" id="invoice-text-${esc(i.id)}">${esc(text)}</textarea></article>`}).join(''):'<p class="muted">No invoices yet.</p>'}
+$('invoiceList').addEventListener('click',async e=>{const c=e.target.closest('[data-copy-invoice]'),w=e.target.closest('[data-wa-invoice]');const id=(c||w)?.dataset.copyInvoice||(w?.dataset.waInvoice);if(!id)return;const area=$('invoice-text-'+id);if(c){try{await navigator.clipboard.writeText(area.value);msg('invoiceStatus','Invoice/receipt text copied.','success')}catch(_){area.classList.remove('hidden');area.select();msg('invoiceStatus','Select and copy the text shown.','success')}}if(w){const invId=w.dataset.waInvoice;const {data,error}=await db.from('wak_invoices').select('*, wak_patients(full_name,phone)').eq('id',invId).single();if(error){msg('invoiceStatus',error.message,'error');return}const p=data.wak_patients||{};const n=(p.phone||'').replace(/\D/g,'').replace(/^0/,'92');const text=area.value;if(n)window.open('https://wa.me/'+n+'?text='+encodeURIComponent(text),'_blank');else window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank')}});
+(async()=>{if(!configured){msg('loginStatus','Configuration is missing.','error');return}db=window.supabase.createClient(cfg.url,cfg.anonKey);const {data}=await db.auth.getSession();if(data.session)showApp()})();
+})();
+</script>
+</body></html>
